@@ -382,8 +382,8 @@ python3 main.py
 | :--- | :--- | :--- | :--- |
 | `MAX_WORKERS` | `int` | `200` | TCP 并发测试最大线程数 |
 | `AVAILABILITY_WORKERS` | `int` | `32` | 可用性检测并发数 |
-| `BANDWIDTH_WORKERS` | `int` | `32` | 带宽测速并发数 |
-| `FALLBACK_WORKERS` | `int` | `10` | 备用国家查询的并发线程数（当标签无法识别时自动调用可用性API查询国家） |
+| `FALLBACK_WORKERS` | `int` | `32` | 备用国家查询的并发线程数（当标签无法识别时自动调用可用性API查询国家） |
+| `BANDWIDTH_WORKERS` | `int` | `10` | 带宽测速并发数 |
 
 **重试策略配置**
 
