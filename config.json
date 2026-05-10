@@ -82,7 +82,7 @@
             "enabled": true
         },
         {
-            "url": "https://countrymerge.pages.dev/all.txt",
+            "url": "https://bestcf.pages.dev/tiancheng/all.txt",
             "enabled": true
         },
         {
@@ -143,6 +143,12 @@
         "SY", "TH", "TW", "UA", "VE", "VN", "YE", "ZW"
     ],
     "_comment_BLOCKED_COUNTRIES": "【仅DNS】黑名单国家代码列表（DNS 更新时剔除这些国家的节点）",
+
+    "DNS_IP_RISK_FILTER_ENABLED": false,
+    "_comment_DNS_IP_RISK_FILTER_ENABLED": "【仅DNS】是否启用 IP 风险等级过滤，开关打开时仅保留风险等级不高于DNS_IP_RISK_MAX_LEVEL 的 IP",
+
+    "DNS_IP_RISK_MAX_LEVEL": "高风险",
+    "_comment_DNS_IP_RISK_MAX_LEVEL": "【仅DNS】允许的最高风险等级（极度纯净 / 纯净 / 轻微风险 / 高风险 / 极度危险）",
 
     "DNS_UPDATE_TARGET_COUNT": 15,
     "_comment_DNS_UPDATE_TARGET_COUNT": "DNS 更新时写入的最大 IP 数量，独立于筛选模式",
