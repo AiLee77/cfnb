@@ -45,7 +45,7 @@
 | 🚫 **DNS 黑名单** | DNS 更新时剔除指定国家节点（**仅作用于 DNS 更新环节**） |
 | 🛡️ **IPv6 落地过滤** | 过滤落地仅 IPv6 的节点，保留 IPv4/双栈节点（**仅作用于 DNS 更新环节**） |
 | 🔍 **IP 风险等级过滤** | 仅允许低风险节点，高危自动回退（**仅作用于 DNS 更新环节**） |
-| ☁️ **Cloudflare DNS 更新** | 批量替换同名 A 记录 |
+| ☁️ **Cloudflare DNS 更新** | 原子批量替换同名 A 记录 |
 | 📬 **微信实时通知** | 集成 WxPusher，异常/结果推送 |
 | 🔄 **定时自动运行** | Windows 计划任务 / Linux cron，每 5 分钟 |
 | 🚀 **一键部署** | `setup.ps1` / `setup.sh` 自动安装依赖并配置 |
@@ -328,22 +328,9 @@ python3 main.py
 | `CF_PROXIED` | `boolean` | `false` | 是否启用 Cloudflare CDN 代理 |
 | `CF_DNS_CONNECT_TIMEOUT` | `int` | `3` | Cloudflare API 连接超时（秒） |
 | `CF_DNS_READ_TIMEOUT` | `int` | `3` | Cloudflare API 读取超时（秒） |
+| `DNS_RECORD_TYPE` | `string` | `"A"` | DNS 记录类型（A 或 AAAA） |
 
 > 💡 若不需要 DNS 更新，将 `CF_ENABLED` 设为 `false` 即可。
-
-<details>
-<summary>🔧 DNS 原地更新及重试配置</summary>
-
-| 参数 | 类型 | 默认值 | 说明 |
-| :--- | :--- | :--- | :--- |
-| `DNS_PUT_WORKERS` | `int` | `10` | PUT 原地更新时的最大并发线程数 |
-| `DNS_PUT_RETRY_COUNT` | `int` | `2` | 单个 PUT 更新失败后的即时重试次数 |
-| `DNS_PUT_RETRY_DELAY` | `int` | `1` | PUT 重试间隔（秒） |
-| `DNS_RECORD_TYPE` | `string` | `"A"` | DNS 记录类型，可选 `A`（IPv4）或 `AAAA`（IPv6） |
-| `DNS_DELETE_CREATE_RETRY_COUNT` | `int` | `2` | 批量删除/创建操作失败时的重试次数 |
-| `DNS_DELETE_CREATE_RETRY_DELAY` | `int` | `1` | 批量删除/创建操作重试间隔（秒） |
-
-</details>
 
 ### 节点数据源与获取配置
 
@@ -502,15 +489,13 @@ python3 main.py
 
 1. 查询目标子域名下现有的所有 A 记录。
 2. 从带宽测速结果中按速度顺序挑选落地 IPv4 的节点（若启用 `FILTER_IPV6_AVAILABILITY`）。
-3. **采用 PUT 原地更新方式**：并发修改已存在的 DNS 记录的 IP 为新的优选 IP，新旧 IP 交替时记录始终保持有效，**全程无解析真空期**。
-4. 若旧记录数量多于目标数量，自动删除多余记录；若旧记录不足，则补建新记录。
-5. 所有 API 操作（PUT 更新、删除、创建）均支持独立重试，可配置重试次数和间隔。
+3. 组装一个原子批量请求：同时删除所有旧记录并创建全部新记录。
 
 ### 注意事项
 
 - 免费套餐单次批量操作最多支持 200 条记录，足够使用。
 - 若候选池中落地 IPv4 节点不足目标数量，则更新实际可用的数量，不会强制凑满。
-- 由于采用 PUT 原地更新，整个过程中域名下始终有有效记录，**不会出现解析真空期**。即使部分记录更新失败，旧 IP 仍会被保留，不影响服务。
+- 使用原子批量 API，单次请求完成删除和创建，可能存在极短暂的解析真空期（通常 1~5 秒）。
 
 ---
 
