@@ -338,10 +338,10 @@ python3 main.py
 | :--- | :--- | :--- | :--- |
 | `DNS_PUT_WORKERS` | `int` | `10` | PUT 原地更新时的最大并发线程数 |
 | `DNS_PUT_RETRY_COUNT` | `int` | `2` | 单个 PUT 更新失败后的即时重试次数 |
-| `DNS_PUT_RETRY_DELAY` | `int` | `3` | PUT 重试间隔（秒） |
+| `DNS_PUT_RETRY_DELAY` | `int` | `1` | PUT 重试间隔（秒） |
 | `DNS_RECORD_TYPE` | `string` | `"A"` | DNS 记录类型，可选 `A`（IPv4）或 `AAAA`（IPv6） |
 | `DNS_DELETE_CREATE_RETRY_COUNT` | `int` | `2` | 批量删除/创建操作失败时的重试次数 |
-| `DNS_DELETE_CREATE_RETRY_DELAY` | `int` | `3` | 批量删除/创建操作重试间隔（秒） |
+| `DNS_DELETE_CREATE_RETRY_DELAY` | `int` | `1` | 批量删除/创建操作重试间隔（秒） |
 
 </details>
 
@@ -362,7 +362,7 @@ python3 main.py
 | `LOG_FILE` | `string` | `"cfnb.log"` | 运行日志文件名（仅在启用日志时生效） |
 
 <details>
-<summary>🔧 高级参数（可用性 / 带宽 / 并发 / 重试 / 广告）</summary>
+<summary>🔧 高级参数（可用性 / 带宽 / 并发 / 重试 / 广告/ 输出）</summary>
 
 **可用性检测参数**
 
@@ -422,6 +422,21 @@ python3 main.py
 
 > 💡 三个开关完全独立，头部/尾部可为多条，行尾为单条固定文本。  
 > 开启后只会改变 `ip.txt` 内容，不影响 Cloudflare DNS 更新（DNS 仍使用纯净节点列表）。
+
+</details>
+
+<details>
+<summary>📝 ip.txt 输出内容控制</summary>
+
+控制最终 `ip.txt` 文件中每行节点后是否附带带宽测速和 TCP 延迟信息，方便直接查看或用于其他工具解析。
+
+| 参数 | 类型 | 默认值 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `IP_TXT_SHOW_BANDWIDTH` | `boolean` | `false` | 是否在每行末尾追加带宽测速结果（如 ` 5.20 Mbps`） |
+| `IP_TXT_SHOW_LATENCY` | `boolean` | `false` | 是否在每行末尾追加 TCP 延迟信息（如 ` 50.30 ms`） |
+
+> 两个开关可以独立或同时开启，输出格式示例：  
+> `104.16.0.1:443#US 5.20 Mbps 50.30 ms`
 
 </details>
 
